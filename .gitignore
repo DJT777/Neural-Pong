@@ -1,0 +1,4 @@
+*.o
+phoenix/qt/platform.moc
+roms/*.zip
+dice
