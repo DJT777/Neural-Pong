@@ -1,13 +1,13 @@
-## DICE EMU (_SDL2 / QT5_)
+## DICE EMU (_SDL2 / Qt5_)
 
 <img src="demo.gif" width="640" height="458" />
 
 _"DICE is a Discrete Integrated Circuit Emulator. It emulates computer systems that lack any type of CPU, consisting only of discrete logic components."_ - Most of these discrete logic systems are not currently supported in MAME.
 
-This repository holds `DICE v0.9` source with changes to allow compilation with `SLD2` and `QT5`.  
+This repository holds `DICE v0.9` source with changes to allow compilation with `SLD2` and `Qt5`.  
 `libsd2-compat` and `SDL3` was tested successfully.
 
-The `APPLE` and `WIN32` compilation routes have been ignored and/or commented out.
+The `APPLE` and `WIN32` compilation routes have been disabled.
 
 _Games supported_:
 ```

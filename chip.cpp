@@ -978,6 +978,7 @@ uint64_t Chip::activation_check(uint64_t min_time, uint64_t max_time)
                 
                 min_time = activation_time > last_input_event[j] ? last_input_event[j] : activation_time;
 
+
                 if(activation_time >= max)
                 {
                     result = false;
@@ -1493,7 +1494,15 @@ inline int Chip::next_bit(uint32_t x)
 inline int Chip::next_bit64(uint64_t x)
 {
 #if 0
-    // TODO: 64-bit gcc alternative
+    static const uint8_t de_bruijn_bit_position[64] =
+    {
+        0, 1, 63, 2, 62, 31, 48, 3, 61, 50, 45, 33, 49, 42, 56, 27,
+        60, 52, 46, 35, 54, 41, 57, 23, 53, 37, 55, 19, 44, 29, 36, 28,
+        59, 51, 47, 43, 58, 34, 38, 30, 39, 25, 40, 24, 32, 26, 22, 21,
+        20, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4
+    };
+
+    return de_bruijn_bit_position[((uint64_t)((x & -x) * 0x03f79d71b4cb0a89ULL)) >> 58];
 #else
     return __builtin_ctzll(x);
 #endif  

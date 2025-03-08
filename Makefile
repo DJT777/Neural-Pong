@@ -31,40 +31,35 @@ CPPFLAGS = $(CFLAGS) -std=c++11
 
 BIN := dice
 
-OBJ := phoenix/qt/platform.moc $(OBJ)
-LIBS += `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets Qt5OpenGL sdl2` -lSDL2 -lGL -ldl -lX11
-CFLAGS += -fPIC `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets Qt5OpenGL sdl2` -DPHOENIX_QT
-#LIBS += `pkg-config --libs gtk+-2.0` -lX11 -lGL
-#CFLAGS += -DPHOENIX_GTK `pkg-config --cflags gtk+-2.0`
+ifeq ($(PLATFORM),)
+    uname := $(shell uname -a)
+    ifeq ($(uname),)
+        PLATFORM := windows
+    else ifneq ($(findstring Darwin,$(uname)),)
+        PLATFORM := osx
+    else ifneq ($(findstring Linux,$(uname)),)
+        PLATFORM := linux
+    endif
+endif
 
-# Just for Linux X11/QT5 for now
-#
-#ifeq ($(PLATFORM),)
-#    uname := $(shell uname -a)
-#    ifeq ($(uname),)
-#        PLATFORM := windows
-#    else ifneq ($(findstring Darwin,$(uname)),)
-#        PLATFORM := osx
-#    else ifneq ($(findstring Linux,$(uname)),)
-#        PLATFORM := linux
-#    endif
-#endif
-#
-#ifeq ($(PLATFORM),windows)
-#       OBJ += ui/dice.o
-#       LIBS += -lSDL -static-libgcc -static-libstdc++ -lmingw32 -lopengl32 -lkernel32 -luser32 -lgdi32 -ladvapi32 -lcomctl32 -lcomdlg32 -lshell32 -lole32 -mwindows #-mconsole
-#       CFLAGS += -DPHOENIX_WINDOWS
-#       BIN := dice.exe
-#else ifeq ($(PLATFORM),linux)
-#       OBJ := phoenix/qt/platform.moc $(OBJ)
-#       LIBS += `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets sdl2` -lSDL2 -lGL -ldl -lX11
-#       CFLAGS += -fPIC `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets sdl2` -DPHOENIX_QT
-#       #LIBS += `pkg-config --libs gtk+-2.0` -lX11 -lGL
-#       #CFLAGS += -DPHOENIX_GTK `pkg-config --cflags gtk+-2.0`
-#else ifeq ($(PLATFORM),osx)
-#       LIBS += -lc++ -lobjc -framework OpenGL -framework SDL -framework Cocoa -framework Carbon -framework IOKit
-#       CFLAGS += -x objective-c++ -stdlib=libc++ -DPHOENIX_COCOA -F/Library/Frameworks
-#endif
+# Only Linux X11/Qt5 atm
+
+ifeq ($(PLATFORM),windows)
+       $(error Windows is not supported)
+       #OBJ += ui/dice.o
+       #LIBS += -lSDL -static-libgcc -static-libstdc++ -lmingw32 -lopengl32 -lkernel32 -luser32 -lgdi32 -ladvapi32 -lcomctl32 -lcomdlg32 -lshell32 -lole32 -mwindows #-mconsole
+       #FLAGS += -DPHOENIX_WINDOWS
+       #BIN := dice.exe
+else ifeq ($(PLATFORM),linux)
+       OBJ := phoenix/qt/platform.moc $(OBJ)
+       LIBS += `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets Qt5OpenGL sdl2` -lSDL2 -lGL -ldl -lX11 -lpthread
+       CFLAGS += `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets Qt5OpenGL sdl2` -fPIC -DPHOENIX_QT
+else ifeq ($(PLATFORM),osx)
+       $(error MacOSX is not supported)
+       #LIBS += -lc++ -lobjc -framework OpenGL -framework SDL -framework Cocoa -framework Carbon -framework IOKit
+       #CFLAGS += -x objective-c++ -stdlib=libc++ -DPHOENIX_COCOA -F/Library/Frameworks
+
+endif
 
 # For profiling
 #LIBS += -pg 
