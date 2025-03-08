@@ -50,6 +50,10 @@ pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets Qt5OpenGL sdl2
 
 Project **README** can be found [here](README.txt)
 
+### Libretro Core
+
+https://github.com/mittonk/dice-libretro
+
 ### Credits
 
-Many thanks to _Adam B_ for his work on `DICE`: https://adamulation.blogspot.com/
+Many thanks to _Adam Bousley_ for his work on `DICE`: https://adamulation.blogspot.com/

@@ -32,13 +32,13 @@ CPPFLAGS = $(CFLAGS) -std=c++11
 BIN := dice
 
 ifeq ($(PLATFORM),)
-    uname := $(shell uname -a)
-    ifeq ($(uname),)
-        PLATFORM := windows
-    else ifneq ($(findstring Darwin,$(uname)),)
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S), Darwin)
         PLATFORM := osx
-    else ifneq ($(findstring Linux,$(uname)),)
+    else ifeq ($(UNAME_S), Linux)
         PLATFORM := linux
+    else
+        PLATFORM := windows
     endif
 endif
 
@@ -58,7 +58,6 @@ else ifeq ($(PLATFORM),osx)
        $(error MacOSX is not supported)
        #LIBS += -lc++ -lobjc -framework OpenGL -framework SDL -framework Cocoa -framework Carbon -framework IOKit
        #CFLAGS += -x objective-c++ -stdlib=libc++ -DPHOENIX_COCOA -F/Library/Frameworks
-
 endif
 
 # For profiling
