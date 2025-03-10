@@ -22,6 +22,8 @@
 
 namespace phoenix {
 
+const int window_width = 200;
+
 Window& pWindow::none() {
   static Window* window = nullptr;
   if(window == nullptr) window = new Window;
@@ -128,10 +130,10 @@ void pWindow::setGeometry(Geometry geometry) {
 
   setResizable(window.state.resizable);
   qtWindow->move((Desktop::size().width / 2) - (geometry.width * 0.85), geometry.y + frameMargin().y);
-  qtWindow->resize(QSize(200, qtMenu->height() + qtStatus->height()));
+  qtWindow->resize(QSize(window_width, qtMenu->height() + qtStatus->height()));
   if(window.state.resizable) {
     //required to allow shrinking window from default size
-    qtWindow->setMinimumSize(1, 1);
+    //qtWindow->setMinimumSize(1, 1);
     qtContainer->setMinimumSize(1, 1);
   }
 
@@ -170,6 +172,7 @@ void pWindow::setResizable(bool resizable) {
   if(resizable) {
     qtLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
     qtContainer->setMinimumSize(window.state.geometry.width, window.state.geometry.height);
+    qtWindow->setFixedSize(window_width, qtMenu->height() + qtStatus->height());
   } else {
     qtLayout->setSizeConstraint(QLayout::SetFixedSize);
     qtContainer->setFixedSize(window.state.geometry.width, window.state.geometry.height);
@@ -210,7 +213,8 @@ void pWindow::setWidgetFont(string font) {
 void pWindow::constructor() {
   qtWindow = new QtWindow(*this);
   qtWindow->setWindowTitle(" ");
-  qtWindow->setWindowFlags(qtWindow->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+  qtWindow->setWindowFlags(qtWindow->windowFlags() & ~Qt::WindowMinimizeButtonHint
+                          & ~Qt::WindowMaximizeButtonHint & ~Qt::WindowSystemMenuHint);
 
   //if program was given a name, try and set the window taskbar icon to a matching pixmap image
   if(applicationState.name.empty() == false) {
