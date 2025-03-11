@@ -262,7 +262,7 @@ struct MainWindow : Window
             }
             else
             {
-                SDL_SetWindowTitle(g_window, cli_fullscreen ? VERSION_STRING
+                SDL_SetWindowTitle(g_window, g_fullscreen ? VERSION_STRING
                     : game_list[game_window.game_view.selection()].name);
             }
 
@@ -292,13 +292,9 @@ struct MainWindow : Window
         if (fullscreen)
             SDL_SetWindowFullscreen(g_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
-        //settings.fullscreen = fullscreen;
-        //fullscreen_item.setChecked(fullscreen);
         setStatusVisible(!fullscreen);
         setMenuVisible(!fullscreen);
         setFullScreen(fullscreen);
-        //video->show_cursor(!fullscreen);
-        //onSize();
 
         SDL_RaiseWindow(g_window);
         SDL_SetWindowInputFocus(g_window);
@@ -450,17 +446,31 @@ struct MainWindow : Window
 
             while(SDL_PollEvent(&event))
             {
-                 switch(event.type)
-                 {
-                    case SDL_KEYDOWN:
-                        if (event.key.keysym.sym == SDLK_ESCAPE) {
-                            onClose();
-                        }
-                        break;
-                    default:
+                switch(event.type)
+                {
+                   case SDL_KEYDOWN:
+                       if (event.key.keysym.sym == SDLK_ESCAPE) {
+                           onClose();
+                       }
                        break;
-                 }
-             }
+                   case SDL_KEYUP:
+                       if (event.key.keysym.sym == SDLK_f && !start_fullscreen) {
+                           SDL_SetWindowFullscreen(g_window, g_fullscreen ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
+                           g_fullscreen = !g_fullscreen;
+                           setFullScreen(g_fullscreen);
+                           onSize();
+
+                           if (!g_fullscreen)
+                               SDL_SetWindowPosition(g_window, (Desktop::workspace().width - 640) / 2 + 30,
+                                                         (Desktop::workspace().height - 480) / 2);
+                           SDL_RaiseWindow(g_window);
+                           SDL_SetWindowInputFocus(g_window);
+                       }
+                       break;
+                   default:
+                       break;
+                }
+            }
         }
     }
 };
@@ -500,8 +510,7 @@ int main(int argc, char** argv)
 
     if(argc > 1)
     {
-        bool start_fullscreen = true;
-        cli_fullscreen = true;
+        start_fullscreen = g_fullscreen = true;
         
         // Parse options
         for(int i = 2; i < argc; i++)

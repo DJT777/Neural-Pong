@@ -50,6 +50,9 @@ pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets Qt5OpenGL sdl2
 
 Project **README** can be found [here](README.txt)
 
+Use `f` for fullscreen toggle in GUI mode.  
+Use `ESC` to _QUIT_.
+
 ### Libretro Core
 
 https://github.com/mittonk/dice-libretro

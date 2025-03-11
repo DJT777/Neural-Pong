@@ -113,11 +113,14 @@ void pWindow::setFocused() {
 void pWindow::setFullScreen(bool fullScreen) {
   if(fullScreen == false) {
     setResizable(window.state.resizable);
+    qtContainer->setFixedSize(0, 0);
     qtWindow->showNormal();
     qtWindow->adjustSize();
   } else {
     qtLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
     qtContainer->setFixedSize(Desktop::size().width - frameMargin().width, Desktop::size().height - frameMargin().height);
+    qtMenu->setFixedSize(window_width, qtMenu->height());
+    qtStatus->setFixedSize(window_width, qtStatus->height());
     qtWindow->showMinimized();
   }
 }

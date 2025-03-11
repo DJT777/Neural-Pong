@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 extern SDL_Window* g_window;
-extern bool cli_fullscreen;
+extern bool start_fullscreen;
+extern bool g_fullscreen;
 
 #endif
