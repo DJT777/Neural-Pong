@@ -454,7 +454,7 @@ struct MainWindow : Window
                        }
                        break;
                    case SDL_KEYUP:
-                       if (event.key.keysym.sym == SDLK_f && !start_fullscreen) {
+                       if (event.key.keysym.sym == SDLK_f && !start_fullscreen && circuit) {
                            SDL_SetWindowFullscreen(g_window, g_fullscreen ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
                            g_fullscreen = !g_fullscreen;
                            setFullScreen(g_fullscreen);
