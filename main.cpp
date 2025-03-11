@@ -418,10 +418,12 @@ struct MainWindow : Window
             // Don't update ui inputs while main window is in the background
             if(focused())
             {            
+#if 0
                 if(ui_state.quit && !prev_ui_state.quit)
                 {
                     onClose();
                 }
+#endif
                 if(ui_state.pause && !prev_ui_state.pause)
                 {
                     settings.pause = !settings.pause;
