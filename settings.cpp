@@ -222,7 +222,7 @@ Settings::Settings() : num_mice(0), pause(false), throttle(true), fullscreen(fal
     // User Interface
     appendKey(input.ui.pause = KeyAssignment(KeyAssignment::KEYBOARD, Keyboard::Scancode::P), "input.ui.pause");
     appendKey(input.ui.throttle = KeyAssignment(KeyAssignment::KEYBOARD, Keyboard::Scancode::Insert), "input.ui.throttle");
-    appendKey(input.ui.fullscreen = KeyAssignment(KeyAssignment::KEYBOARD, Keyboard::Scancode::F11), "input.ui.fullscreen");
+    appendKey(input.ui.fullscreen = KeyAssignment(KeyAssignment::KEYBOARD, Keyboard::Scancode::F), "F");
     appendKey(input.ui.quit = KeyAssignment(KeyAssignment::KEYBOARD, Keyboard::Scancode::Escape), "input.ui.quit");
 } 
 

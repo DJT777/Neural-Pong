@@ -681,14 +681,16 @@ struct InputWindow : Window
             throttle.create();
             fullscreen.create();
             quit.create();
+            fullscreen.button.setEnabled(false);
+            quit.button.setEnabled(false);
         }
 
         void setEnabled(bool e = true)
         {
             pause.button.setEnabled(e);
             throttle.button.setEnabled(e);
-            fullscreen.button.setEnabled(e);
-            quit.button.setEnabled(e);
+            fullscreen.button.setEnabled(false);
+            quit.button.setEnabled(false);
         }
     };
 
