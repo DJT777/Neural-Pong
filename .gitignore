@@ -2,3 +2,5 @@
 phoenix/qt/platform.moc
 roms/*.zip
 dice
+DICE-ML-ENV/
+captures/
