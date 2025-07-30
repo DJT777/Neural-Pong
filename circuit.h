@@ -48,6 +48,7 @@ public:
 
     /* new recorder members */
     std::unique_ptr<StateRecorder> recorder;   // owns the dump file
+    std::string frame_dir;
     uint32_t                        last_frame_count = 0;
 
     /* updated constructor */
