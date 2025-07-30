@@ -317,32 +317,42 @@ CUSTOM_LOGIC( Video::video )
     video->current_time = global_time;
 }
 
-
-void Video::dumpPPM(const std::string& dir, uint32_t id) const
+/* -------------------------------------------------------------------------
+ *  Video::dumpPPM  – save back‑buffer as P6 PPM, upright orientation
+ * ---------------------------------------------------------------------- */
+void Video::dumpPPM(const std::string& dir, uint32_t idx) const
 {
-    /* 1. Query the drawable size directly from OpenGL */
-    GLint vp[4];                // {x, y, width, height}
-    glGetIntegerv(GL_VIEWPORT, vp);
+    /* 1. Viewport size ------------------------------------------------- */
+    GLint vp[4]; glGetIntegerv(GL_VIEWPORT, vp);
     const uint32_t w = static_cast<uint32_t>(vp[2]);
     const uint32_t h = static_cast<uint32_t>(vp[3]);
+    const size_t   rowBytes = static_cast<size_t>(w) * 3;
 
-    /* 2. Read RGB pixels from the back‑buffer */
+    /* 2. Read raw pixels from lower‑left origin ------------------------ */
     std::vector<uint8_t> buf(static_cast<size_t>(w) * h * 3);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);          /* tight rows */
     glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, buf.data());
 
-    /* 3. Compose filename  <dir>/frame_########.ppm  */
-    std::ostringstream fn;
-    fn << dir << "/frame_" << std::setw(9) << std::setfill('0') << id << ".ppm";
+    /* 3. Flip vertically (OpenGL → traditional image coords) ---------- */
+    std::vector<uint8_t> flipped(buf.size());
+    for(uint32_t y = 0; y < h; ++y)
+        memcpy(&flipped[y * rowBytes],
+               &buf[(h - 1 - y) * rowBytes],
+               rowBytes);
 
-    /* 4. Write binary PPM (P6) */
+    /* 4. Build filename  <dir>/frame_########.ppm ---------------------- */
+    std::ostringstream fn;
+    fn << dir << "/frame_" << std::setw(9) << std::setfill('0') << idx << ".ppm";
+
+    /* 5. Write binary PPM --------------------------------------------- */
     std::ofstream out(fn.str(), std::ios::binary);
     if(!out) {
-        fprintf(stderr, "Video::dumpPPM – cannot open %s for write\n",
-                fn.str().c_str());
+        fprintf(stderr, "dumpPPM: cannot open %s\n", fn.str().c_str());
         return;
     }
     out << "P6\n" << w << ' ' << h << "\n255\n";
-    out.write(reinterpret_cast<const char*>(buf.data()), buf.size());
+    out.write(reinterpret_cast<const char*>(flipped.data()), flipped.size());
 }
+
 
 Video* Video::createDefault(VerticalLayout& layout, Viewport*& viewport) { return new VideoSdl(viewport->handle()); }
