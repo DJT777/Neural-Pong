@@ -100,9 +100,23 @@ public:
 };
 
 
-Circuit::Circuit(const Settings& s, Input& i, Video& v, const CircuitDesc* desc, const char* name) 
-    : settings(s), game_config(desc, name), input(i), video(v), global_time(0), queue_size(0)
+Circuit::Circuit(const Settings&  s,
+                 Input&           i,
+                 Video&           v,
+                 const CircuitDesc* desc,
+                 const char*      name,
+                 const std::string& dump_path,
+                 SampleMode       smode)
+  : settings(s)
+  , game_config(desc, name)
+  , input(i)
+  , video(v)
+  , global_time(0)
+  , queue_size(0)
+  , recorder()                 // default‑initialise unique_ptr
+  , last_frame_count(0)
 {
+
     CircuitBuilder converter(this, chips);
 
 
@@ -141,6 +155,17 @@ Circuit::Circuit(const Settings& s, Input& i, Video& v, const CircuitDesc* desc,
                 chips[1]->output_links.push_back(ChipLink(chips[i], 1 << j));
                 chips[i]->input_links[j] = ChipLink(chips[1], 0);
             }
+
+
+    /*-------------------------------------------------*
+     *  Optional state‑dump initialisation
+     *-------------------------------------------------*/
+    if(!dump_path.empty()) {
+        recorder.reset(new StateRecorder(dump_path,
+                                        chips.size(),
+                                        smode));   // C++11‑safe
+    }
+
 
 
     // Grab video descriptor
@@ -443,23 +468,43 @@ void Circuit::queue_pop()
 void Circuit::run(int64_t run_time)
 {
     while(run_time > 0)
-	{        
+    {
         if(queue_size)
         {
             run_time -= queue[1].time - global_time;
-		    global_time = queue[1].time;
+            global_time = queue[1].time;
         }
         else
-		{
-			global_time += run_time;	
-			return;
-		}
+        {
+            global_time += run_time;
+            return;
+        }
 
-		if(global_time == queue[1].chip->pending_event)
-		{	
-			queue[1].chip->update_output();
-		}
+        if(global_time == queue[1].chip->pending_event)
+        {
+            queue[1].chip->update_output();
+        }
         queue_pop();
-	}
+
+        /*-------------------------------------------------
+         *  State‑dump sampling (optional, zero‑cost if
+         *  recorder == nullptr)
+         *------------------------------------------------*/
+        if(recorder)
+        {
+            if(recorder->mode() == SampleMode::Tick)
+            {
+                /* cycle‑accurate: every iteration */
+                recorder->sample(global_time, chips);
+            }
+            else  /* SampleMode::FrameEdge */
+            {
+                uint32_t f_now = video.frameCounter();
+                if(f_now != last_frame_count)
+                    recorder->sample(global_time, chips);
+                last_frame_count = f_now;
+            }
+        }
+    }
 }
 

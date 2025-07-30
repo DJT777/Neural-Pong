@@ -41,6 +41,7 @@ public:
     static CUSTOM_LOGIC( video );
 
     static Video* createDefault(phoenix::VerticalLayout& layout, phoenix::Viewport*& viewport);
+    uint32_t frameCounter() const noexcept { return frame_count; }
 };
 
 extern CHIP_DESC( VIDEO );

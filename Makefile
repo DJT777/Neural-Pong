@@ -23,7 +23,7 @@ GAME_OBJ := games/pong.o games/rebound.o games/gotcha.o games/spacerace.o games/
 MANYMOUSE_OBJ := manymouse/manymouse.o manymouse/windows_wminput.o manymouse/linux_evdev.o \
 				 manymouse/macosx_hidmanager.o manymouse/macosx_hidutilities.o manymouse/x11_xinput2.o
 
-OBJ := main.o globals.o chip.o circuit.o settings.o game_config.o phoenix/phoenix.o $(CHIP_OBJ) $(GAME_OBJ) $(MANYMOUSE_OBJ)
+OBJ := main.o globals.o chip.o circuit.o state_dump.o settings.o game_config.o phoenix/phoenix.o $(CHIP_OBJ) $(GAME_OBJ) $(MANYMOUSE_OBJ)
 
 LIBS := -s
 CFLAGS := -Iphoenix -O3 #-g -march=core2 #-march=i686 #-fprofile-generate #-fprofile-use #-flto #-Wall
